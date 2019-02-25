@@ -2,7 +2,7 @@
 
 #include "ChooseNextWaypoint.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "PatrollingGuard.h" // TODO, remove later
+#include "PatrollingGuard.h" // TODO, remove coupling later
 #include "AIController.h"
 
 EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -10,10 +10,9 @@ EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 	BlackboardComp = OwnerComp.GetBlackboardComponent();
 
 	if (!Cast<APatrollingGuard>(OwnerComp.GetAIOwner()->GetPawn())) return EBTNodeResult::Failed;
-
 	SetupWaypointArray(OwnerComp);
 
-	if (!Waypoints[Index] || Waypoints[Index] == Cast<AActor>(ControlledPawn)) return EBTNodeResult::Failed;
+	if (!Waypoints[Index]) return EBTNodeResult::Failed;
 	SetWaypoint();
 
 	CycleIndex();
@@ -35,8 +34,6 @@ void UChooseNextWaypoint::SetWaypoint()
 
 void UChooseNextWaypoint::CycleIndex()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Index number : %i percent %i"), Index++, Waypoints.Num());
-	Index = (Index++) % Waypoints.Num();
-	UE_LOG(LogTemp, Warning, TEXT("is %i"), Index);
-	BlackboardComp->SetValueAsInt(IndexKey.SelectedKeyName, Index);
+	int32 NextIndex = (Index + 1) % Waypoints.Num();
+	BlackboardComp->SetValueAsInt(IndexKey.SelectedKeyName, NextIndex);
 }
