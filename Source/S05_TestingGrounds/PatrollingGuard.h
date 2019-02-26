@@ -14,8 +14,5 @@ class S05_TESTINGGROUNDS_API APatrollingGuard : public ATP_ThirdPersonCharacter
 {
 	GENERATED_BODY()
 
-public:
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Patrol Route")
-	TArray <AActor *> PatrolPoints;
+
 };

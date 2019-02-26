@@ -7,6 +7,7 @@
 #include "ChooseNextWaypoint.generated.h"
 
 class UBlackboardComponent;
+class UPatrolRoute;
 /**
  * 
  */
@@ -29,11 +30,13 @@ public:
 private:
 
 	UPROPERTY()
-	TArray <AActor *> Waypoints;
+	TArray <AActor *> PatrolPoints;
 
 	int32 Index;
 
 	APawn * ControlledPawn;
+
+	UPatrolRoute * PatrolRoute;
 
 	UBlackboardComponent * BlackboardComp;
 

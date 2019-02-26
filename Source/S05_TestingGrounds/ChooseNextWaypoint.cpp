@@ -1,18 +1,31 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ChooseNextWaypoint.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "PatrollingGuard.h" // TODO, remove coupling later
+#include "PatrolRoute.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	
 	BlackboardComp = OwnerComp.GetBlackboardComponent();
+	ControlledPawn = OwnerComp.GetAIOwner()->GetPawn();
 
-	if (!Cast<APatrollingGuard>(OwnerComp.GetAIOwner()->GetPawn())) return EBTNodeResult::Failed;
+	if (!ControlledPawn) return EBTNodeResult::Failed;
+
+	PatrolRoute = ControlledPawn->FindComponentByClass<UPatrolRoute>();
+
+	UE_LOG(LogTemp, Warning, TEXT("Patrol Route: %s"), *PatrolRoute->GetName());
+
+	if (!PatrolRoute) return EBTNodeResult::Failed;
+	
 	SetupWaypointArray(OwnerComp);
-
-	if (!Waypoints[Index]) return EBTNodeResult::Failed;
+	if (PatrolPoints.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("A Guard is missing Patrol Points!"));
+		return EBTNodeResult::Failed;
+	}
+	
 	SetWaypoint();
 
 	CycleIndex();
@@ -23,17 +36,17 @@ EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 void UChooseNextWaypoint::SetupWaypointArray(UBehaviorTreeComponent& OwnerComp)
 {
 	Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
-	ControlledPawn = OwnerComp.GetAIOwner()->GetPawn();
-	Waypoints = Cast<APatrollingGuard>(ControlledPawn)->PatrolPoints;
+	
+	PatrolPoints = PatrolRoute->GetPatrolPoints();
 }
 
 void UChooseNextWaypoint::SetWaypoint()
 {
-	BlackboardComp->SetValueAsObject(WaypointKey.SelectedKeyName, Waypoints[Index]);
+	BlackboardComp->SetValueAsObject(WaypointKey.SelectedKeyName, PatrolPoints[Index]);
 }
 
 void UChooseNextWaypoint::CycleIndex()
 {
-	int32 NextIndex = (Index + 1) % Waypoints.Num();
+	int32 NextIndex = (Index + 1) % PatrolPoints.Num();
 	BlackboardComp->SetValueAsInt(IndexKey.SelectedKeyName, NextIndex);
 }
