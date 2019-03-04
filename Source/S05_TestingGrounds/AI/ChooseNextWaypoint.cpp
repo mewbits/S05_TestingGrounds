@@ -15,7 +15,6 @@ EBTNodeResult::Type UChooseNextWaypoint::ExecuteTask(UBehaviorTreeComponent& Own
 
 	PatrolRoute = ControlledPawn->FindComponentByClass<UPatrolRoute>();
 
-	UE_LOG(LogTemp, Warning, TEXT("Patrol Route: %s"), *PatrolRoute->GetName());
 
 	if (!PatrolRoute) return EBTNodeResult::Failed;
 	
