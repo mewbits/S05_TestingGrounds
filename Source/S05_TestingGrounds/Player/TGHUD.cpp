@@ -10,7 +10,7 @@
 ATGHUD::ATGHUD()
 {
 	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/Weapons/FirstPersonCrosshair"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/Static/Weapons/FirstPersonCrosshair"));
 	CrosshairTex = CrosshairTexObj.Object;
 }
 

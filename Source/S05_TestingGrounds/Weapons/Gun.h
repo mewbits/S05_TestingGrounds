@@ -22,6 +22,7 @@ public:
 	AGun();
 
 	/** Fires a projectile. */
+	UFUNCTION(BlueprintCallable, Category = "Fireing")
 	void OnFire();
 
 protected:
